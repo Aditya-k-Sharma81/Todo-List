@@ -1,32 +1,32 @@
-# 🚀 Premium MERN Stack Todo & Task Management System
+# Premium MERN Stack Todo & Task Management System
 
 A full-stack, feature-rich Task Management Application built with **React (Vite)**, **Node.js**, **Express**, **MongoDB** (with automatic zero-config **File DB fallback**), and modern Glassmorphism UI styling.
 
 ---
 
-## 📚 Documentation Index
+## Documentation Index
 
 To explore the detailed technical documentation, feature breakdown, and API specifications, check out the following Markdown files in this repository:
 
-* 📄 [DOCUMENTATION.md](file:///d:/React%20Js/Todo/DOCUMENTATION.md) — Comprehensive technical architecture, architecture overview, system workflow, database design, and installation instructions.
-* 📄 [FEATURES.md](file:///d:/React%20Js/Todo/FEATURES.md) — Exhaustive documentation of all features, UI components, filters, search, metrics, subtasks, and persistence mechanisms.
-* 📄 [API.md](file:///d:/React%20Js/Todo/API.md) — Complete REST API reference guide with request/response payloads, query parameters, and endpoints.
+* [DOCUMENTATION.md] — Comprehensive technical architecture, architecture overview, system workflow, database design, and installation instructions.
+* [FEATURES.md] — Exhaustive documentation of all features, UI components, filters, search, metrics, subtasks, and persistence mechanisms.
+* [API.md] — Complete REST API reference guide with request/response payloads, query parameters, and endpoints.
 
 ---
 
-## ✨ Key Features At A Glance
+## Key Features At A Glance
 
-* **📋 Advanced Task Lifecycle**: Full CRUD (Create, Read, Update, Delete) capabilities with support for Title, Description, Priority level, Category, Due Date, and nested Subtask checklists.
-* **🔍 Smart Search & Multi-Criteria Filtering**: Instant real-time search across task titles and descriptions, filtered by Status (*All*, *Active*, *Completed*), Priority (*High*, *Medium*, *Low*), and Category (*Work*, *Personal*, *Health*, *Finance*, *Shopping*).
-* **⚡ Multi-Property Sorting**: Sort tasks dynamically by *Newest First*, *Oldest First*, *Priority Rank*, or *Due Date*.
-* **📊 Analytics Dashboard**: Real-time summary cards displaying Total Tasks, Completed Count, Pending Count, High Priority Tasks, Overdue Tasks, and Completion Rate percentage bar.
-* **☑️ Nested Subtask System & Cascade Synchronization**:
+* ** Advanced Task Lifecycle**: Full CRUD (Create, Read, Update, Delete) capabilities with support for Title, Description, Priority level, Category, Due Date, and nested Subtask checklists.
+* ** Smart Search & Multi-Criteria Filtering**: Instant real-time search across task titles and descriptions, filtered by Status (*All*, *Active*, *Completed*), Priority (*High*, *Medium*, *Low*), and Category (*Work*, *Personal*, *Health*, *Finance*, *Shopping*).
+* ** Multi-Property Sorting**: Sort tasks dynamically by *Newest First*, *Oldest First*, *Priority Rank*, or *Due Date*.
+* ** Analytics Dashboard**: Real-time summary cards displaying Total Tasks, Completed Count, Pending Count, High Priority Tasks, Overdue Tasks, and Completion Rate percentage bar.
+* ** Nested Subtask System & Cascade Synchronization**:
   * Toggling a main task to completed automatically marks all its subtasks as completed.
   * Completing all subtasks automatically updates the parent task status to completed.
-* **💾 Dual DB Persistence with Zero-Downtime Fallback**:
+* ** Dual DB Persistence with Zero-Downtime Fallback**:
   * **MongoDB** (Mongoose schema) when connected.
   * **Local JSON File DB** (`server/data/todos.json`) fallback when MongoDB server is offline.
-* **🎨 Modern Glassmorphism UI & Dual Layout Modes**: Toggle seamlessly between responsive **Grid View** and compact **List View** with sleek animations and CSS variables theme system.
+* ** Modern Glassmorphism UI & Dual Layout Modes**: Toggle seamlessly between responsive **Grid View** and compact **List View** with sleek animations and CSS variables theme system.
 
 ---
 
