@@ -1,0 +1,81 @@
+[
+  {
+    "id": "todo-1700000000001",
+    "title": "Design System & UI Components Setup",
+    "description": "Create reusable UI components including FilterBar, StatsSummary, TodoCard, and Modal dialogs with dark mode glassmorphism theme.",
+    "completed": true,
+    "priority": "High",
+    "category": "Work",
+    "dueDate": "2026-09-05",
+    "subtasks": [
+      { "id": "st-1", "title": "Configure CSS Variables & Typography", "completed": true },
+      { "id": "st-2", "title": "Build glassmorphism card components", "completed": true },
+      { "id": "st-3", "title": "Implement animations and hover state", "completed": true }
+    ],
+    "createdAt": "2026-09-01T10:00:00.000Z",
+    "updatedAt": "2026-09-01T12:30:00.000Z"
+  },
+  {
+    "id": "todo-1700000000002",
+    "title": "Express REST API Implementation",
+    "description": "Build full CRUD endpoints in Express.js supporting pagination, query filters, search, single todo fetch, subtask updates, and metrics aggregation.",
+    "completed": false,
+    "priority": "High",
+    "category": "Work",
+    "dueDate": "2026-09-03",
+    "subtasks": [
+      { "id": "st-4", "title": "Setup Express Server & CORS Middleware", "completed": true },
+      { "id": "st-5", "title": "Implement CRUD controllers & routes", "completed": false },
+      { "id": "st-6", "title": "Add fallback file-persistence storage", "completed": false }
+    ],
+    "createdAt": "2026-09-01T11:15:00.000Z",
+    "updatedAt": "2026-09-01T11:15:00.000Z"
+  },
+  {
+    "id": "todo-1700000000003",
+    "title": "Single Todo Detail View Page",
+    "description": "Develop multi-page routing view reading the ?id=<todo_id> query parameter, displaying complete metadata, activity timestamps, edit modal, and interactive subtasks checklist.",
+    "completed": false,
+    "priority": "Medium",
+    "category": "Work",
+    "dueDate": "2026-09-04",
+    "subtasks": [
+      { "id": "st-7", "title": "Setup URL search params parser", "completed": false },
+      { "id": "st-8", "title": "Build subtask checklist progress bar", "completed": false },
+      { "id": "st-9", "title": "Add edit and delete buttons with navigation", "completed": false }
+    ],
+    "createdAt": "2026-09-01T14:00:00.000Z",
+    "updatedAt": "2026-09-01T14:00:00.000Z"
+  },
+  {
+    "id": "todo-1700000000004",
+    "title": "Grocery & Pantry Supplies Shopping",
+    "description": "Pick up essential supplies for the weekly meal prep session.",
+    "completed": false,
+    "priority": "Low",
+    "category": "Shopping",
+    "dueDate": "2026-09-02",
+    "subtasks": [
+      { "id": "st-10", "title": "Organic Vegetables & Berries", "completed": true },
+      { "id": "st-11", "title": "Almond Milk & Greek Yogurt", "completed": false },
+      { "id": "st-12", "title": "Whole Grain Bread", "completed": false }
+    ],
+    "createdAt": "2026-09-01T08:30:00.000Z",
+    "updatedAt": "2026-09-01T08:30:00.000Z"
+  },
+  {
+    "id": "todo-1700000000005",
+    "title": "Daily 30-Minute Cardio Workout",
+    "description": "Morning jog in the park or interval training session to stay energized.",
+    "completed": true,
+    "priority": "Medium",
+    "category": "Health",
+    "dueDate": "2026-09-01",
+    "subtasks": [
+      { "id": "st-13", "title": "Warm up & stretching", "completed": true },
+      { "id": "st-14", "title": "5km run", "completed": true }
+    ],
+    "createdAt": "2026-09-01T06:00:00.000Z",
+    "updatedAt": "2026-09-01T07:00:00.000Z"
+  }
+]
