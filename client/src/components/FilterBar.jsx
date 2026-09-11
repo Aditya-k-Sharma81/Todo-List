@@ -106,6 +106,18 @@ export const FilterBar = ({
             </select>
           </div>
 
+          {/* Reset Filters Button (if active filters exist) */}
+          {(filters.search || filters.priority !== 'all' || filters.category !== 'all') && (
+            <button
+              onClick={() => onFilterChange({ search: '', status: filters.status, priority: 'all', category: 'all', sortBy: filters.sortBy })}
+              className="btn btn-secondary"
+              style={{ padding: '0.4rem 0.75rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.35rem', color: '#fca5a5', borderColor: 'rgba(239, 68, 68, 0.3)' }}
+              title="Reset search, priority, and category filters"
+            >
+              Reset Filters
+            </button>
+          )}
+
           {/* Grid / List View Toggle */}
           <div style={{ display: 'flex', background: 'rgba(15, 23, 42, 0.6)', padding: '0.2rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)', marginLeft: 'auto' }}>
             <button

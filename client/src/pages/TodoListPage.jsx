@@ -6,12 +6,13 @@ import { TodoCard } from '../components/TodoCard';
 import { TodoModal } from '../components/TodoModal';
 import { Plus, Sparkles, Inbox, RefreshCw } from 'lucide-react';
 
-export const TodoListPage = ({ isModalOpen, setIsModalOpen }) => {
+export const TodoListPage = ({ onOpenCreateModal }) => {
   const [todos, setTodos] = useState([]);
   const [stats, setStats] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editingTodo, setEditingTodo] = useState(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const [filters, setFilters] = useState({
     search: '',
@@ -42,7 +43,37 @@ export const TodoListPage = ({ isModalOpen, setIsModalOpen }) => {
   };
 
   useEffect(() => {
-    loadData();
+    let isSubscribed = true;
+
+    const fetchAllData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const [todosRes, statsRes] = await Promise.all([
+          api.getTodos(filters),
+          api.getStats()
+        ]);
+        if (isSubscribed) {
+          setTodos(todosRes.data || []);
+          setStats(statsRes.data || {});
+        }
+      } catch (err) {
+        if (isSubscribed) {
+          console.error('Error loading page data:', err);
+          setError('Failed to connect to backend API server. Make sure the server is running on port 5000.');
+        }
+      } finally {
+        if (isSubscribed) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchAllData();
+
+    return () => {
+      isSubscribed = false;
+    };
   }, [filters]);
 
   const handleToggle = async (id) => {
@@ -73,13 +104,17 @@ export const TodoListPage = ({ isModalOpen, setIsModalOpen }) => {
   };
 
   const handleOpenCreate = () => {
-    setEditingTodo(null);
-    setIsModalOpen(true);
+    if (onOpenCreateModal) {
+      onOpenCreateModal();
+    } else {
+      setEditingTodo(null);
+      setIsEditModalOpen(true);
+    }
   };
 
   const handleOpenEdit = (todo) => {
     setEditingTodo(todo);
-    setIsModalOpen(true);
+    setIsEditModalOpen(true);
   };
 
   const handleSaveTodo = async (todoData) => {
@@ -89,7 +124,7 @@ export const TodoListPage = ({ isModalOpen, setIsModalOpen }) => {
       } else {
         await api.createTodo(todoData);
       }
-      setIsModalOpen(false);
+      setIsEditModalOpen(false);
       setEditingTodo(null);
       loadData();
     } catch (err) {
@@ -101,7 +136,7 @@ export const TodoListPage = ({ isModalOpen, setIsModalOpen }) => {
   return (
     <div className="app-container">
       {/* Metrics Dashboard */}
-      <StatsSummary stats={stats} />
+      <StatsSummary stats={stats} filters={filters} onFilterChange={setFilters} />
 
       {/* Filter and Search Bar */}
       <FilterBar
@@ -157,10 +192,10 @@ export const TodoListPage = ({ isModalOpen, setIsModalOpen }) => {
         </div>
       )}
 
-      {/* Create / Edit Modal Dialog */}
+      {/* Edit Modal Dialog */}
       <TodoModal
-        isOpen={isModalOpen}
-        onClose={() => { setIsModalOpen(false); setEditingTodo(null); }}
+        isOpen={isEditModalOpen}
+        onClose={() => { setIsEditModalOpen(false); setEditingTodo(null); }}
         onSave={handleSaveTodo}
         initialTodo={editingTodo}
       />

@@ -11,18 +11,14 @@ const {
   getStats
 } = require('../controllers/todoController');
 
-router.route('/')
-  .get(getTodos)
-  .post(createTodo);
-
+// Routes relative to /api/todos
+router.get('/', getTodos);
 router.get('/stats', getStats);
-
-router.route('/:id')
-  .get(getTodoById)
-  .put(updateTodo)
-  .delete(deleteTodo);
-
+router.get('/:id', getTodoById);
+router.post('/', createTodo);
+router.put('/:id', updateTodo);
 router.patch('/:id/toggle', toggleTodo);
 router.patch('/:id/subtasks/:subtaskId', toggleSubtask);
+router.delete('/:id', deleteTodo);
 
 module.exports = router;

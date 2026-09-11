@@ -69,11 +69,16 @@ export const SingleTodoPage = () => {
   const handleToggleSubtask = async (subtaskId) => {
     if (!todo) return;
     try {
-      // Optimistic update
       const updatedSubtasks = (todo.subtasks || []).map(st => 
         st.id === subtaskId ? { ...st, completed: !st.completed } : st
       );
-      setTodo({ ...todo, subtasks: updatedSubtasks });
+      const isAllCompleted = updatedSubtasks.length > 0 && updatedSubtasks.every(st => st.completed);
+      const updatedTodoData = {
+        ...todo,
+        subtasks: updatedSubtasks,
+        completed: isAllCompleted
+      };
+      setTodo(updatedTodoData);
 
       await api.toggleSubtask(todo.id, subtaskId);
       loadSingleTodo();
@@ -94,11 +99,38 @@ export const SingleTodoPage = () => {
     };
 
     const updatedSubtasks = [...(todo.subtasks || []), newSubtask];
+    const isAllCompleted = updatedSubtasks.length > 0 && updatedSubtasks.every(st => st.completed);
 
     try {
-      setTodo({ ...todo, subtasks: updatedSubtasks });
+      const updatedTodoData = {
+        ...todo,
+        subtasks: updatedSubtasks,
+        completed: isAllCompleted // Will set completed to false since a new pending subtask was added
+      };
+      setTodo(updatedTodoData);
       setNewSubtaskTitle('');
-      await api.updateTodo(todo.id, { ...todo, subtasks: updatedSubtasks });
+      await api.updateTodo(todo.id, updatedTodoData);
+      loadSingleTodo();
+    } catch (err) {
+      console.error(err);
+      loadSingleTodo();
+    }
+  };
+
+  const handleDeleteSubtask = async (subtaskId) => {
+    if (!todo) return;
+    try {
+      const updatedSubtasks = (todo.subtasks || []).filter(st => st.id !== subtaskId);
+      const isAllCompleted = updatedSubtasks.length > 0 && updatedSubtasks.every(st => st.completed);
+
+      const updatedTodoData = {
+        ...todo,
+        subtasks: updatedSubtasks,
+        completed: updatedSubtasks.length > 0 ? isAllCompleted : todo.completed
+      };
+
+      setTodo(updatedTodoData);
+      await api.updateTodo(todo.id, updatedTodoData);
       loadSingleTodo();
     } catch (err) {
       console.error(err);
@@ -260,35 +292,47 @@ export const SingleTodoPage = () => {
 
           {/* Subtask Items List */}
           {subtasks.length === 0 ? (
-            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', italic: true }}>No subtasks added yet.</p>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>No subtasks added yet. Type a subtask above and click "Add Subtask".</p>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               {subtasks.map((st) => (
                 <div
                   key={st.id}
-                  onClick={() => handleToggleSubtask(st.id)}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '0.75rem',
+                    justifyContent: 'space-between',
                     background: 'rgba(15, 23, 42, 0.6)',
                     padding: '0.75rem 1rem',
                     borderRadius: 'var(--radius-sm)',
                     border: '1px solid var(--border-color)',
-                    cursor: 'pointer',
                     transition: 'all 0.15s ease'
                   }}
                 >
-                  <span style={{ color: st.completed ? '#34d399' : 'var(--text-muted)' }}>
-                    {st.completed ? <CheckCircle2 size={18} /> : <Circle size={18} />}
-                  </span>
-                  <span style={{
-                    fontSize: '0.925rem',
-                    color: st.completed ? 'var(--text-muted)' : 'var(--text-primary)',
-                    textDecoration: st.completed ? 'line-through' : 'none'
-                  }}>
-                    {st.title}
-                  </span>
+                  <div
+                    onClick={() => handleToggleSubtask(st.id)}
+                    style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flex: 1, cursor: 'pointer' }}
+                  >
+                    <span style={{ color: st.completed ? '#34d399' : 'var(--text-muted)' }}>
+                      {st.completed ? <CheckCircle2 size={18} /> : <Circle size={18} />}
+                    </span>
+                    <span style={{
+                      fontSize: '0.925rem',
+                      color: st.completed ? 'var(--text-muted)' : 'var(--text-primary)',
+                      textDecoration: st.completed ? 'line-through' : 'none'
+                    }}>
+                      {st.title}
+                    </span>
+                  </div>
+
+                  <button
+                    onClick={() => handleDeleteSubtask(st.id)}
+                    className="btn-icon"
+                    title="Delete subtask"
+                    style={{ color: '#fca5a5', padding: '0.2rem' }}
+                  >
+                    <Trash2 size={16} />
+                  </button>
                 </div>
               ))}
             </div>

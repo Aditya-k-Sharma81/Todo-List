@@ -49,13 +49,22 @@ export const TodoModal = ({ isOpen, onClose, onSave, initialTodo = null }) => {
     e.preventDefault();
     if (!title.trim()) return;
 
+    let finalSubtasks = [...subtasks];
+    if (newSubtaskTitle.trim()) {
+      finalSubtasks.push({
+        id: `st-${Date.now()}`,
+        title: newSubtaskTitle.trim(),
+        completed: false
+      });
+    }
+
     onSave({
       title: title.trim(),
       description: description.trim(),
       priority,
       category,
       dueDate,
-      subtasks
+      subtasks: finalSubtasks
     });
 
     onClose();

@@ -8,29 +8,29 @@ exports.getTodos = async (req, res) => {
     let todos = await TodoDAO.find();
 
     // Filter by Search Query (Title or Description)
-    if (search) {
-      const q = search.toLowerCase();
+    if (search && search.trim()) {
+      const q = search.trim().toLowerCase();
       todos = todos.filter(t => 
-        t.title.toLowerCase().includes(q) || 
-        t.description.toLowerCase().includes(q)
+        (t.title && t.title.toLowerCase().includes(q)) || 
+        (t.description && t.description.toLowerCase().includes(q))
       );
     }
 
     // Filter by Completion Status
     if (status === 'active') {
-      todos = todos.filter(t => !t.completed);
+      todos = todos.filter(t => !(t.completed === true || t.completed === 'true'));
     } else if (status === 'completed') {
-      todos = todos.filter(t => t.completed);
+      todos = todos.filter(t => t.completed === true || t.completed === 'true');
     }
 
     // Filter by Priority Level
     if (priority && priority !== 'all') {
-      todos = todos.filter(t => t.priority.toLowerCase() === priority.toLowerCase());
+      todos = todos.filter(t => t.priority && t.priority.trim().toLowerCase() === priority.trim().toLowerCase());
     }
 
     // Filter by Category Tag
     if (category && category !== 'all') {
-      todos = todos.filter(t => t.category.toLowerCase() === category.toLowerCase());
+      todos = todos.filter(t => t.category && t.category.trim().toLowerCase() === category.trim().toLowerCase());
     }
 
     // Sorting

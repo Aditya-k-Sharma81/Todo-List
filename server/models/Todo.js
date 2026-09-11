@@ -115,10 +115,13 @@ class TodoDAO {
 
   static async update(id, updateData) {
     const now = new Date().toISOString();
+    const dataToUpdate = { ...updateData };
+    delete dataToUpdate._id;
+
     if (getIsMongoConnected()) {
       const doc = await MongoTodo.findOneAndUpdate(
         { id },
-        { $set: { ...updateData, updatedAt: now } },
+        { $set: { ...dataToUpdate, updatedAt: now } },
         { new: true }
       );
       return doc ? doc.toObject() : null;
