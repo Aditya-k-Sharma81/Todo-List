@@ -17,7 +17,7 @@ Base URL: `http://localhost:5000`
 | `POST` | `/api/todos` | Create a new task |
 | `PUT` | `/api/todos/:id` | Update an existing task |
 | `PATCH` | `/api/todos/:id/toggle` | Toggle completion status of a task |
-| `PATCH` | `/api/todos/:id/subtasks/:subtaskId` | Toggle completion status of a specific subtask |
+| `PUT`/`PATCH` | `/api/todos/:id/subtasks/:subtaskId` | Update subtask title / toggle completion status |
 | `DELETE` | `/api/todos/:id` | Delete a task |
 
 ---
@@ -231,13 +231,27 @@ Host: localhost:5000
 
 ---
 
-### 7. PATCH `/api/todos/:id/subtasks/:subtaskId`
-Toggle a specific subtask completion status by subtask ID.
+### 7. PUT / PATCH `/api/todos/:id/subtasks/:subtaskId`
+Update a specific subtask title and/or completion status by subtask ID.
+
+#### Request Body Schema (Optional):
+```json
+{
+  "title": "Updated subtask title",
+  "completed": true
+}
+```
+*Note: If no body is provided on `PATCH`, the completion status toggles automatically.*
 
 #### Sample Request:
 ```http
-PATCH /api/todos/todo-1725200000000/subtasks/st-1 HTTP/1.1
+PUT /api/todos/todo-1725200000000/subtasks/st-1 HTTP/1.1
 Host: localhost:5000
+Content-Type: application/json
+
+{
+  "title": "Updated subtask item title"
+}
 ```
 
 #### Sample Response (`200 OK`):
@@ -248,7 +262,7 @@ Host: localhost:5000
     "id": "todo-1725200000000",
     "completed": false,
     "subtasks": [
-      { "id": "st-1", "title": "Task item", "completed": true },
+      { "id": "st-1", "title": "Updated subtask item title", "completed": false },
       { "id": "st-2", "title": "Task item 2", "completed": false }
     ]
   }

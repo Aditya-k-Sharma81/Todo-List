@@ -161,11 +161,13 @@ exports.toggleTodo = async (req, res) => {
   }
 };
 
-// @desc    Toggle a specific subtask completion status
+// @desc    Update a specific subtask (title and/or completion status)
+// @route   PUT /api/todos/:id/subtasks/:subtaskId
 // @route   PATCH /api/todos/:id/subtasks/:subtaskId
-exports.toggleSubtask = async (req, res) => {
+exports.updateSubtask = async (req, res) => {
   try {
     const { id, subtaskId } = req.params;
+    const { title, completed } = req.body || {};
     const existing = await TodoDAO.findById(id);
 
     if (!existing) {
@@ -179,7 +181,16 @@ exports.toggleSubtask = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Subtask not found' });
     }
 
-    subtasks[subtaskIndex].completed = !subtasks[subtaskIndex].completed;
+    if (title !== undefined && typeof title === 'string') {
+      subtasks[subtaskIndex].title = title.trim();
+    }
+
+    if (completed !== undefined) {
+      subtasks[subtaskIndex].completed = Boolean(completed);
+    } else if (title === undefined) {
+      // Toggle completion status if title not provided
+      subtasks[subtaskIndex].completed = !subtasks[subtaskIndex].completed;
+    }
 
     // Check if all subtasks are completed now
     const allCompleted = subtasks.length > 0 && subtasks.every(st => st.completed);
@@ -191,10 +202,12 @@ exports.toggleSubtask = async (req, res) => {
 
     res.json({ success: true, data: updated });
   } catch (error) {
-    console.error('Error toggling subtask:', error);
-    res.status(500).json({ success: false, message: 'Server Error toggling subtask' });
+    console.error('Error updating subtask:', error);
+    res.status(500).json({ success: false, message: 'Server Error updating subtask' });
   }
 };
+
+exports.toggleSubtask = exports.updateSubtask;
 
 // @desc    Delete todo item
 // @route   DELETE /api/todos/:id
@@ -222,17 +235,41 @@ exports.getStats = async (req, res) => {
     const today = new Date().toISOString().split('T')[0];
 
     const total = todos.length;
-    const completed = todos.filter(t => t.completed).length;
-    const pending = total - completed;
-    const highPriority = todos.filter(t => !t.completed && t.priority === 'High').length;
-    const overdue = todos.filter(t => !t.completed && t.dueDate && t.dueDate < today).length;
-    const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
+    let totalProgressSum = 0;
+    let completedCount = 0;
+
+    todos.forEach(t => {
+      const isTaskCompleted = Boolean(t.completed === true || t.completed === 'true');
+      const subtasks = Array.isArray(t.subtasks) ? t.subtasks : [];
+      const totalSub = subtasks.length;
+      const completedSub = subtasks.filter(st => st.completed === true || st.completed === 'true').length;
+
+      if (isTaskCompleted || (totalSub > 0 && completedSub === totalSub)) {
+        completedCount++;
+        totalProgressSum += 1;
+      } else if (totalSub > 0) {
+        totalProgressSum += (completedSub / totalSub);
+      }
+    });
+
+    const pending = total - completedCount;
+    const highPriority = todos.filter(t => {
+      const isDone = Boolean(t.completed === true || t.completed === 'true');
+      return !isDone && t.priority === 'High';
+    }).length;
+
+    const overdue = todos.filter(t => {
+      const isDone = Boolean(t.completed === true || t.completed === 'true');
+      return !isDone && t.dueDate && t.dueDate < today;
+    }).length;
+
+    const completionRate = total > 0 ? Math.round((totalProgressSum / total) * 100) : 0;
 
     res.json({
       success: true,
       data: {
         total,
-        completed,
+        completed: completedCount,
         pending,
         highPriority,
         overdue,

@@ -64,6 +64,17 @@ export const api = {
     return await res.json();
   },
 
+  // Update subtask (title and/or completion)
+  async updateSubtask(id, subtaskId, subtaskData) {
+    const res = await fetch(`${API_BASE}/${id}/subtasks/${subtaskId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(subtaskData)
+    });
+    if (!res.ok) throw new Error('Failed to update subtask');
+    return await res.json();
+  },
+
   // Delete todo
   async deleteTodo(id) {
     const res = await fetch(`${API_BASE}/${id}`, {

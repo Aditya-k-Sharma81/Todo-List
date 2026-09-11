@@ -5,6 +5,7 @@ import { FilterBar } from '../components/FilterBar';
 import { TodoCard } from '../components/TodoCard';
 import { TodoModal } from '../components/TodoModal';
 import { Plus, Sparkles, Inbox, RefreshCw } from 'lucide-react';
+import { showDeleteConfirm, showSuccessToast, showErrorAlert } from '../utils/alerts';
 
 export const TodoListPage = ({ onOpenCreateModal }) => {
   const [todos, setTodos] = useState([]);
@@ -91,15 +92,25 @@ export const TodoListPage = ({ onOpenCreateModal }) => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this task?')) return;
+    const target = todos.find(t => t.id === id);
+    const result = await showDeleteConfirm({
+      title: 'Delete Task?',
+      text: target?.title ? `Are you sure you want to delete "${target.title}"?` : 'Are you sure you want to delete this task?',
+      confirmButtonText: 'Yes, Delete Task'
+    });
+
+    if (!result.isConfirmed) return;
+
     try {
       setTodos(prev => prev.filter(t => t.id !== id));
       await api.deleteTodo(id);
+      showSuccessToast('Task deleted successfully');
       const statsRes = await api.getStats();
       setStats(statsRes.data || {});
     } catch (err) {
       console.error(err);
       loadData();
+      showErrorAlert('Failed to delete task. Please try again.');
     }
   };
 
@@ -121,22 +132,53 @@ export const TodoListPage = ({ onOpenCreateModal }) => {
     try {
       if (editingTodo) {
         await api.updateTodo(editingTodo.id, todoData);
+        showSuccessToast('Task updated successfully');
       } else {
         await api.createTodo(todoData);
+        showSuccessToast('Task created successfully');
       }
       setIsEditModalOpen(false);
       setEditingTodo(null);
       loadData();
     } catch (err) {
       console.error('Error saving todo:', err);
-      alert('Error saving task. Please try again.');
+      showErrorAlert('Error saving task. Please try again.');
     }
   };
+
+  // Compute dynamic stats from todos array to ensure stats are always up to date
+  const computedStats = React.useMemo(() => {
+    if (stats && stats.total !== undefined && stats.total > 0) return stats;
+
+    const total = todos.length;
+    let totalProgressSum = 0;
+    let completedCount = 0;
+
+    todos.forEach(t => {
+      const isTaskCompleted = Boolean(t.completed === true || t.completed === 'true');
+      const subtasks = Array.isArray(t.subtasks) ? t.subtasks : [];
+      const totalSub = subtasks.length;
+      const completedSub = subtasks.filter(st => st.completed === true || st.completed === 'true').length;
+
+      if (isTaskCompleted || (totalSub > 0 && completedSub === totalSub)) {
+        completedCount++;
+        totalProgressSum += 1;
+      } else if (totalSub > 0) {
+        totalProgressSum += (completedSub / totalSub);
+      }
+    });
+
+    const pending = total - completedCount;
+    const highPriority = todos.filter(t => !t.completed && t.priority === 'High').length;
+    const completionRate = total > 0 ? Math.round((totalProgressSum / total) * 100) : 0;
+
+    return { total, completed: completedCount, pending, highPriority, completionRate, ...stats };
+  }, [todos, stats]);
 
   return (
     <div className="app-container">
       {/* Metrics Dashboard */}
-      <StatsSummary stats={stats} filters={filters} onFilterChange={setFilters} />
+      <StatsSummary stats={computedStats} filters={filters} onFilterChange={setFilters} />
 
       {/* Filter and Search Bar */}
       <FilterBar

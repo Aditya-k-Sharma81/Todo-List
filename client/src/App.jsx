@@ -5,6 +5,7 @@ import { TodoListPage } from './pages/TodoListPage';
 import { SingleTodoPage } from './pages/SingleTodoPage';
 import { TodoModal } from './components/TodoModal';
 import { api } from './services/api';
+import { showSuccessToast, showErrorAlert } from './utils/alerts';
 
 function AppContent() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -16,6 +17,7 @@ function AppContent() {
     try {
       const res = await api.createTodo(todoData);
       setIsCreateModalOpen(false);
+      showSuccessToast('Task created successfully');
 
       // If created successfully, navigate to the newly created todo page
       if (res?.data?.id) {
@@ -28,7 +30,7 @@ function AppContent() {
       }
     } catch (err) {
       console.error('Error creating task:', err);
-      alert('Error creating task. Please try again.');
+      showErrorAlert('Error creating task. Please try again.');
     }
   };
 

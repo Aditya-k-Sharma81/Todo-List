@@ -12,7 +12,8 @@ This document provides a detailed breakdown of all user-facing features, technic
 | **Core CRUD** | Task Editing | Full inline / modal update of task properties | ✅ Implemented |
 | **Core CRUD** | Task Deletion | Remove tasks from storage with state update | ✅ Implemented |
 | **Core CRUD** | Toggle Completion | Toggle main task completion status | ✅ Implemented |
-| **Subtasks** | Checklist Items | Add, remove, and toggle subtasks | ✅ Implemented |
+| **Subtasks** | Checklist Items | Add, remove, toggle, and edit subtasks inline | ✅ Implemented |
+| **Subtasks** | Subtask Editing | Inline update of subtask titles in single view & modal | ✅ Implemented |
 | **Subtasks** | Cascade Sync | Automatic completion sync between parent task & subtasks | ✅ Implemented |
 | **Search & Filter** | Live Search | Instant text match on task title and description | ✅ Implemented |
 | **Search & Filter** | Status Filter | Filter by `All`, `Active`, or `Completed` | ✅ Implemented |
@@ -20,7 +21,8 @@ This document provides a detailed breakdown of all user-facing features, technic
 | **Search & Filter** | Category Filter | Filter by tags: `Work`, `Personal`, `Health`, `Finance`, `Shopping` | ✅ Implemented |
 | **Sorting** | Dynamic Sorting | Sort by `Newest First`, `Oldest First`, `Priority Rank`, or `Due Date` | ✅ Implemented |
 | **View Modes** | Layout Switcher | Toggle between responsive Grid View and compact List View | ✅ Implemented |
-| **Analytics** | Metrics Dashboard | Real-time statistics: Total, Completed, Pending, High Priority, Overdue & Completion Rate % | ✅ Implemented |
+| **Analytics** | Metrics Dashboard | Real-time statistics: Total, Completed, Pending, High Priority, Overdue & Progress Rate % | ✅ Implemented |
+| **UI Alerts** | SweetAlert2 Dialogs | Sleek custom dark theme delete confirmation dialogs & success toasts | ✅ Implemented |
 | **Pages** | Single Task View | Deep-dive dedicated view for individual tasks (`/todo?id=...`) | ✅ Implemented |
 | **Persistence** | Zero-Config DB Fallback | Automatic fallback from MongoDB to File DB (`todos.json`) | ✅ Implemented |
 | **Design** | Glassmorphism UI | Sleek dark theme UI with blur panels, hover effects, CSS variables | ✅ Implemented |

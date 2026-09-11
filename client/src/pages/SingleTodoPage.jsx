@@ -15,8 +15,11 @@ import {
   Plus, 
   AlertCircle,
   FileText,
-  History
+  History,
+  Check,
+  X
 } from 'lucide-react';
+import { showDeleteConfirm, showSuccessToast, showErrorAlert } from '../utils/alerts';
 
 export const SingleTodoPage = () => {
   const [searchParams] = useSearchParams();
@@ -28,6 +31,8 @@ export const SingleTodoPage = () => {
   const [error, setError] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [newSubtaskTitle, setNewSubtaskTitle] = useState('');
+  const [editingSubtaskId, setEditingSubtaskId] = useState(null);
+  const [editingSubtaskTitle, setEditingSubtaskTitle] = useState('');
 
   const loadSingleTodo = async () => {
     if (!todoId) {
@@ -119,6 +124,15 @@ export const SingleTodoPage = () => {
 
   const handleDeleteSubtask = async (subtaskId) => {
     if (!todo) return;
+    const target = (todo.subtasks || []).find(st => st.id === subtaskId);
+    const result = await showDeleteConfirm({
+      title: 'Delete Subtask?',
+      text: target?.title ? `Are you sure you want to remove "${target.title}"?` : 'Are you sure you want to remove this subtask?',
+      confirmButtonText: 'Yes, Delete Subtask'
+    });
+
+    if (!result.isConfirmed) return;
+
     try {
       const updatedSubtasks = (todo.subtasks || []).filter(st => st.id !== subtaskId);
       const isAllCompleted = updatedSubtasks.length > 0 && updatedSubtasks.every(st => st.completed);
@@ -131,6 +145,37 @@ export const SingleTodoPage = () => {
 
       setTodo(updatedTodoData);
       await api.updateTodo(todo.id, updatedTodoData);
+      showSuccessToast('Subtask deleted');
+      loadSingleTodo();
+    } catch (err) {
+      console.error(err);
+      loadSingleTodo();
+    }
+  };
+
+  const handleStartEditSubtask = (st) => {
+    setEditingSubtaskId(st.id);
+    setEditingSubtaskTitle(st.title);
+  };
+
+  const handleCancelEditSubtask = () => {
+    setEditingSubtaskId(null);
+    setEditingSubtaskTitle('');
+  };
+
+  const handleSaveSubtaskTitle = async (subtaskId) => {
+    if (!editingSubtaskTitle.trim() || !todo) return;
+    try {
+      const updatedSubtasks = (todo.subtasks || []).map(st =>
+        st.id === subtaskId ? { ...st, title: editingSubtaskTitle.trim() } : st
+      );
+      setTodo({ ...todo, subtasks: updatedSubtasks });
+      const newTitle = editingSubtaskTitle.trim();
+      setEditingSubtaskId(null);
+      setEditingSubtaskTitle('');
+
+      await api.updateSubtask(todo.id, subtaskId, { title: newTitle });
+      showSuccessToast('Subtask updated');
       loadSingleTodo();
     } catch (err) {
       console.error(err);
@@ -140,12 +185,20 @@ export const SingleTodoPage = () => {
 
   const handleDeleteTodo = async () => {
     if (!todo) return;
-    if (!window.confirm('Are you sure you want to delete this task?')) return;
+    const result = await showDeleteConfirm({
+      title: 'Delete Task?',
+      text: `Are you sure you want to delete "${todo.title}"?`,
+      confirmButtonText: 'Yes, Delete Task'
+    });
+
+    if (!result.isConfirmed) return;
+
     try {
       await api.deleteTodo(todo.id);
+      showSuccessToast('Task deleted successfully');
       navigate('/');
     } catch (err) {
-      alert('Failed to delete task.');
+      showErrorAlert('Failed to delete task. Please try again.');
     }
   };
 
@@ -153,10 +206,11 @@ export const SingleTodoPage = () => {
     if (!todo) return;
     try {
       await api.updateTodo(todo.id, updatedData);
+      showSuccessToast('Task updated successfully');
       setIsEditModalOpen(false);
       loadSingleTodo();
     } catch (err) {
-      alert('Failed to update task.');
+      showErrorAlert('Failed to update task. Please try again.');
     }
   };
 
@@ -303,36 +357,86 @@ export const SingleTodoPage = () => {
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     background: 'rgba(15, 23, 42, 0.6)',
-                    padding: '0.75rem 1rem',
+                    padding: '0.65rem 1rem',
                     borderRadius: 'var(--radius-sm)',
                     border: '1px solid var(--border-color)',
-                    transition: 'all 0.15s ease'
+                    transition: 'all 0.15s ease',
+                    gap: '0.5rem'
                   }}
                 >
-                  <div
-                    onClick={() => handleToggleSubtask(st.id)}
-                    style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flex: 1, cursor: 'pointer' }}
-                  >
-                    <span style={{ color: st.completed ? '#34d399' : 'var(--text-muted)' }}>
-                      {st.completed ? <CheckCircle2 size={18} /> : <Circle size={18} />}
-                    </span>
-                    <span style={{
-                      fontSize: '0.925rem',
-                      color: st.completed ? 'var(--text-muted)' : 'var(--text-primary)',
-                      textDecoration: st.completed ? 'line-through' : 'none'
-                    }}>
-                      {st.title}
-                    </span>
-                  </div>
+                  {editingSubtaskId === st.id ? (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: 1 }}>
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={editingSubtaskTitle}
+                        onChange={(e) => setEditingSubtaskTitle(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') { e.preventDefault(); handleSaveSubtaskTitle(st.id); }
+                          if (e.key === 'Escape') { handleCancelEditSubtask(); }
+                        }}
+                        autoFocus
+                        style={{ padding: '0.35rem 0.65rem', fontSize: '0.9rem' }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleSaveSubtaskTitle(st.id)}
+                        className="btn-icon"
+                        title="Save subtask title"
+                        style={{ color: '#34d399', padding: '0.3rem' }}
+                      >
+                        <Check size={16} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleCancelEditSubtask}
+                        className="btn-icon"
+                        title="Cancel edit"
+                        style={{ color: 'var(--text-muted)', padding: '0.3rem' }}
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <div
+                        onClick={() => handleToggleSubtask(st.id)}
+                        style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flex: 1, cursor: 'pointer' }}
+                      >
+                        <span style={{ color: st.completed ? '#34d399' : 'var(--text-muted)' }}>
+                          {st.completed ? <CheckCircle2 size={18} /> : <Circle size={18} />}
+                        </span>
+                        <span style={{
+                          fontSize: '0.925rem',
+                          color: st.completed ? 'var(--text-muted)' : 'var(--text-primary)',
+                          textDecoration: st.completed ? 'line-through' : 'none'
+                        }}>
+                          {st.title}
+                        </span>
+                      </div>
 
-                  <button
-                    onClick={() => handleDeleteSubtask(st.id)}
-                    className="btn-icon"
-                    title="Delete subtask"
-                    style={{ color: '#fca5a5', padding: '0.2rem' }}
-                  >
-                    <Trash2 size={16} />
-                  </button>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                        <button
+                          type="button"
+                          onClick={() => handleStartEditSubtask(st)}
+                          className="btn-icon"
+                          title="Edit subtask title"
+                          style={{ color: 'var(--text-secondary)', padding: '0.2rem' }}
+                        >
+                          <Edit3 size={16} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteSubtask(st.id)}
+                          className="btn-icon"
+                          title="Delete subtask"
+                          style={{ color: '#fca5a5', padding: '0.2rem' }}
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </div>
               ))}
             </div>
