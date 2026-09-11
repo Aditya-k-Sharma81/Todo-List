@@ -5,7 +5,7 @@ import { CheckCircle2, Circle, Calendar, CheckSquare, Edit3, Trash2, ExternalLin
 export const TodoCard = ({ todo, onToggle, onEdit, onDelete, viewMode = 'grid' }) => {
   const { id, title, description, completed, priority, category, dueDate, subtasks = [] } = todo;
 
-  const completedSubtasks = subtasks.filter(st => st.completed).length;
+  const completedSubtasks = subtasks.filter(st => st.completed === true || st.completed === 'true').length;
   const totalSubtasks = subtasks.length;
   const subtaskProgress = totalSubtasks > 0 ? Math.round((completedSubtasks / totalSubtasks) * 100) : 0;
 

@@ -20,6 +20,7 @@ export const TodoListPage = ({ onOpenCreateModal }) => {
     status: 'all',
     priority: 'all',
     category: 'all',
+    createdDate: '',
     sortBy: 'newest'
   });
 
@@ -79,9 +80,26 @@ export const TodoListPage = ({ onOpenCreateModal }) => {
 
   const handleToggle = async (id) => {
     try {
-      // Optimistic update
-      setTodos(prev => prev.map(t => t.id === id ? { ...t, completed: !t.completed } : t));
-      await api.toggleTodo(id);
+      // Optimistic update: update task completion AND all its subtasks completion
+      setTodos(prev => prev.map(t => {
+        if (t.id !== id) return t;
+        const newCompleted = !t.completed;
+        const updatedSubtasks = (t.subtasks || []).map(st => ({
+          ...st,
+          completed: newCompleted
+        }));
+        return {
+          ...t,
+          completed: newCompleted,
+          subtasks: updatedSubtasks
+        };
+      }));
+
+      const res = await api.toggleTodo(id);
+      if (res?.data) {
+        setTodos(prev => prev.map(t => t.id === id ? res.data : t));
+      }
+
       // Refresh stats
       const statsRes = await api.getStats();
       setStats(statsRes.data || {});
@@ -211,8 +229,8 @@ export const TodoListPage = ({ onOpenCreateModal }) => {
           </div>
           <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>No tasks found</h3>
           <p style={{ color: 'var(--text-secondary)', maxWidth: '400px', margin: '0 auto 1.5rem auto', fontSize: '0.9rem' }}>
-            {filters.search || filters.status !== 'all' || filters.priority !== 'all' || filters.category !== 'all'
-              ? 'No task matches your current search or filter criteria. Try resetting filters.'
+            {filters.search || filters.status !== 'all' || filters.priority !== 'all' || filters.category !== 'all' || filters.createdDate
+              ? 'No task matches your current search or date filter criteria. Try resetting filters.'
               : 'Your task list is empty. Get started by creating your first task!'}
           </p>
           <button onClick={handleOpenCreate} className="btn btn-primary">

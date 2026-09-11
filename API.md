@@ -30,7 +30,8 @@ Retrieve a list of tasks matching query parameter filters.
 #### Query Parameters:
 | Parameter | Type | Allowed Values | Description |
 | :--- | :--- | :--- | :--- |
-| `search` | String | Any text | Case-insensitive search on title or description |
+| `search` | String | Any text | Case-insensitive search on title, description, or creation date |
+| `createdDate` | String | `YYYY-MM-DD` | Filter tasks specifically created on a specific date |
 | `status` | String | `all`, `active`, `completed` | Filter by completion status |
 | `priority` | String | `all`, `High`, `Medium`, `Low` | Filter by priority level |
 | `category` | String | `all`, `Work`, `Personal`, `Health`, `Finance`, `Shopping` | Filter by category tag |

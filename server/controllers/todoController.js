@@ -4,16 +4,37 @@ const { TodoDAO } = require('../models/Todo');
 // @route   GET /api/todos
 exports.getTodos = async (req, res) => {
   try {
-    const { search, status, priority, category, sortBy } = req.query;
+    const { search, status, priority, category, createdDate, sortBy } = req.query;
     let todos = await TodoDAO.find();
 
-    // Filter by Search Query (Title or Description)
+    const getCreatedStr = (t) => {
+      if (!t || !t.createdAt) return '';
+      if (t.createdAt instanceof Date) return t.createdAt.toISOString();
+      return String(t.createdAt);
+    };
+
+    // Filter by Search Query (Title, Description, or Created Date)
     if (search && search.trim()) {
       const q = search.trim().toLowerCase();
-      todos = todos.filter(t => 
-        (t.title && t.title.toLowerCase().includes(q)) || 
-        (t.description && t.description.toLowerCase().includes(q))
-      );
+      todos = todos.filter(t => {
+        const cStr = getCreatedStr(t);
+        const cLocale = t.createdAt ? new Date(t.createdAt).toLocaleDateString().toLowerCase() : '';
+        return (
+          (t.title && t.title.toLowerCase().includes(q)) || 
+          (t.description && t.description.toLowerCase().includes(q)) ||
+          (cStr && cStr.toLowerCase().includes(q)) ||
+          (cLocale && cLocale.includes(q))
+        );
+      });
+    }
+
+    // Filter by Created Date (YYYY-MM-DD)
+    if (createdDate && createdDate.trim()) {
+      const cDate = createdDate.trim();
+      todos = todos.filter(t => {
+        const cStr = getCreatedStr(t);
+        return cStr && cStr.startsWith(cDate);
+      });
     }
 
     // Filter by Completion Status

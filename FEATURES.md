@@ -15,7 +15,8 @@ This document provides a detailed breakdown of all user-facing features, technic
 | **Subtasks** | Checklist Items | Add, remove, toggle, and edit subtasks inline | ✅ Implemented |
 | **Subtasks** | Subtask Editing | Inline update of subtask titles in single view & modal | ✅ Implemented |
 | **Subtasks** | Cascade Sync | Automatic completion sync between parent task & subtasks | ✅ Implemented |
-| **Search & Filter** | Live Search | Instant text match on task title and description | ✅ Implemented |
+| **Search & Filter** | Live Search | Instant text match on task title, description, or creation date | ✅ Implemented |
+| **Search & Filter** | Created Date Filter | Filter tasks specifically by Creation Date (`YYYY-MM-DD`) | ✅ Implemented |
 | **Search & Filter** | Status Filter | Filter by `All`, `Active`, or `Completed` | ✅ Implemented |
 | **Search & Filter** | Priority Filter | Filter by `High`, `Medium`, or `Low` priority | ✅ Implemented |
 | **Search & Filter** | Category Filter | Filter by tags: `Work`, `Personal`, `Health`, `Finance`, `Shopping` | ✅ Implemented |
