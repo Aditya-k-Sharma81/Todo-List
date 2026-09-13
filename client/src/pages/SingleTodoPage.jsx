@@ -17,7 +17,8 @@ import {
   FileText,
   History,
   Check,
-  X
+  X,
+  User
 } from 'lucide-react';
 import { showDeleteConfirm, showSuccessToast, showErrorAlert } from '../utils/alerts';
 
@@ -242,7 +243,7 @@ export const SingleTodoPage = () => {
     );
   }
 
-  const { title, description, completed, priority, category, dueDate, subtasks = [], createdAt, updatedAt } = todo;
+  const { title, description, completed, priority, category, dueDate, assignee, subtasks = [], createdAt, updatedAt } = todo;
 
   const completedSubtasks = subtasks.filter(st => st.completed).length;
   const totalSubtasks = subtasks.length;
@@ -295,6 +296,16 @@ export const SingleTodoPage = () => {
         <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap' }}>
           <span className={`badge ${priorityClass}`}>{priority} Priority</span>
           <span className="badge badge-category">Category: {category}</span>
+          {assignee && (
+            <span className="badge" style={{ background: 'rgba(99, 102, 241, 0.2)', color: '#a5b4fc', border: '1px solid rgba(99, 102, 241, 0.4)', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+              <User size={14} /> Assigned to: {assignee}
+            </span>
+          )}
+          {isOverdue && (
+            <span className="badge badge-high" style={{ background: 'rgba(239, 68, 68, 0.25)', color: '#fca5a5', border: '1px solid rgba(239, 68, 68, 0.5)' }}>
+              ⚠️ Overdue Task
+            </span>
+          )}
           <span className={`badge ${completed ? 'badge-status-completed' : 'badge-status-pending'}`}>
             Status: {completed ? 'Done' : 'Active'}
           </span>
@@ -453,6 +464,11 @@ export const SingleTodoPage = () => {
           fontSize: '0.825rem',
           color: 'var(--text-secondary)'
         }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <User size={16} color="var(--accent-primary)" />
+            <span>Assignee: <strong style={{ color: 'var(--text-primary)' }}>{assignee || 'Unassigned'}</strong></span>
+          </div>
+
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
             <Calendar size={16} color={isOverdue ? '#fca5a5' : 'var(--text-muted)'} />
             <span>Due Date: <strong style={{ color: isOverdue ? '#fca5a5' : 'var(--text-primary)' }}>{dueDate || 'None set'}</strong></span>

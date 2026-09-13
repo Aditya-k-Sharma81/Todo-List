@@ -7,6 +7,7 @@
     "priority": "High",
     "category": "Work",
     "dueDate": "2026-09-05",
+    "assignee": "Aditya Sharma",
     "subtasks": [
       { "id": "st-1", "title": "Configure CSS Variables & Typography", "completed": true },
       { "id": "st-2", "title": "Build glassmorphism card components", "completed": true },
@@ -23,6 +24,7 @@
     "priority": "High",
     "category": "Work",
     "dueDate": "2026-09-03",
+    "assignee": "Alex Johnson",
     "subtasks": [
       { "id": "st-4", "title": "Setup Express Server & CORS Middleware", "completed": true },
       { "id": "st-5", "title": "Implement CRUD controllers & routes", "completed": false },
@@ -39,6 +41,7 @@
     "priority": "Medium",
     "category": "Work",
     "dueDate": "2026-09-04",
+    "assignee": "Sarah Connor",
     "subtasks": [
       { "id": "st-7", "title": "Setup URL search params parser", "completed": false },
       { "id": "st-8", "title": "Build subtask checklist progress bar", "completed": false },
@@ -55,6 +58,7 @@
     "priority": "Low",
     "category": "Shopping",
     "dueDate": "2026-09-02",
+    "assignee": "Aditya Sharma",
     "subtasks": [
       { "id": "st-10", "title": "Organic Vegetables & Berries", "completed": true },
       { "id": "st-11", "title": "Almond Milk & Greek Yogurt", "completed": false },
@@ -71,6 +75,7 @@
     "priority": "Medium",
     "category": "Health",
     "dueDate": "2026-09-01",
+    "assignee": "John Doe",
     "subtasks": [
       { "id": "st-13", "title": "Warm up & stretching", "completed": true },
       { "id": "st-14", "title": "5km run", "completed": true }

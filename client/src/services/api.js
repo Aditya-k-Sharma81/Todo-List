@@ -8,6 +8,7 @@ export const api = {
     if (filters.status && filters.status !== 'all') queryParams.append('status', filters.status);
     if (filters.priority && filters.priority !== 'all') queryParams.append('priority', filters.priority);
     if (filters.category && filters.category !== 'all') queryParams.append('category', filters.category);
+    if (filters.assignee && filters.assignee !== 'all') queryParams.append('assignee', filters.assignee);
     if (filters.createdDate) queryParams.append('createdDate', filters.createdDate);
     if (filters.sortBy) queryParams.append('sortBy', filters.sortBy);
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Filter, ArrowUpDown, LayoutGrid, List, Calendar } from 'lucide-react';
+import { Search, Filter, ArrowUpDown, LayoutGrid, List, Calendar, User } from 'lucide-react';
 
 export const FilterBar = ({
   filters,
@@ -27,7 +27,7 @@ export const FilterBar = ({
             type="text"
             className="form-control"
             style={{ paddingLeft: '2.4rem' }}
-            placeholder="Search tasks by title, description, or created date..."
+            placeholder="Search tasks by title or description..."
             value={filters.search || ''}
             onChange={(e) => handleInputChange('search', e.target.value)}
           />
@@ -90,6 +90,24 @@ export const FilterBar = ({
             <option value="Shopping">Shopping</option>
           </select>
 
+          {/* Assignee Filter */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <User size={16} color="var(--text-muted)" />
+            <select
+              className="form-control"
+              style={{ width: 'auto', padding: '0.45rem 0.75rem', fontSize: '0.85rem' }}
+              value={filters.assignee || 'all'}
+              onChange={(e) => handleInputChange('assignee', e.target.value)}
+            >
+              <option value="all">All Assignees</option>
+              <option value="Aditya Sharma">Aditya Sharma</option>
+              <option value="Alex Johnson">Alex Johnson</option>
+              <option value="Sarah Connor">Sarah Connor</option>
+              <option value="John Doe">John Doe</option>
+              <option value="Emily Watson">Emily Watson</option>
+            </select>
+          </div>
+
           {/* Created Date Filter */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
             <Calendar size={16} color="var(--text-muted)" />
@@ -120,12 +138,12 @@ export const FilterBar = ({
           </div>
 
           {/* Reset Filters Button (if active filters exist) */}
-          {(filters.search || filters.priority !== 'all' || filters.category !== 'all' || filters.createdDate) && (
+          {(filters.search || filters.priority !== 'all' || filters.category !== 'all' || (filters.assignee && filters.assignee !== 'all') || filters.createdDate) && (
             <button
-              onClick={() => onFilterChange({ search: '', status: filters.status, priority: 'all', category: 'all', createdDate: '', sortBy: filters.sortBy })}
+              onClick={() => onFilterChange({ search: '', status: filters.status, priority: 'all', category: 'all', assignee: 'all', createdDate: '', sortBy: filters.sortBy })}
               className="btn btn-secondary"
               style={{ padding: '0.4rem 0.75rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.35rem', color: '#fca5a5', borderColor: 'rgba(239, 68, 68, 0.3)' }}
-              title="Reset search, date, priority, and category filters"
+              title="Reset search, date, priority, category, and assignee filters"
             >
               Reset Filters
             </button>

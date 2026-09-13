@@ -20,6 +20,7 @@ export const TodoListPage = ({ onOpenCreateModal }) => {
     status: 'all',
     priority: 'all',
     category: 'all',
+    assignee: 'all',
     createdDate: '',
     sortBy: 'newest'
   });

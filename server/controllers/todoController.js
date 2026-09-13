@@ -4,7 +4,7 @@ const { TodoDAO } = require('../models/Todo');
 // @route   GET /api/todos
 exports.getTodos = async (req, res) => {
   try {
-    const { search, status, priority, category, createdDate, sortBy } = req.query;
+    const { search, status, priority, category, assignee, createdDate, sortBy } = req.query;
     let todos = await TodoDAO.find();
 
     const getCreatedStr = (t) => {
@@ -13,7 +13,7 @@ exports.getTodos = async (req, res) => {
       return String(t.createdAt);
     };
 
-    // Filter by Search Query (Title, Description, or Created Date)
+    // Filter by Search Query (Title, Description, Assignee, or Created Date)
     if (search && search.trim()) {
       const q = search.trim().toLowerCase();
       todos = todos.filter(t => {
@@ -22,6 +22,7 @@ exports.getTodos = async (req, res) => {
         return (
           (t.title && t.title.toLowerCase().includes(q)) || 
           (t.description && t.description.toLowerCase().includes(q)) ||
+          (t.assignee && t.assignee.toLowerCase().includes(q)) ||
           (cStr && cStr.toLowerCase().includes(q)) ||
           (cLocale && cLocale.includes(q))
         );
@@ -52,6 +53,11 @@ exports.getTodos = async (req, res) => {
     // Filter by Category Tag
     if (category && category !== 'all') {
       todos = todos.filter(t => t.category && t.category.trim().toLowerCase() === category.trim().toLowerCase());
+    }
+
+    // Filter by Assignee Name
+    if (assignee && assignee !== 'all') {
+      todos = todos.filter(t => t.assignee && t.assignee.trim().toLowerCase() === assignee.trim().toLowerCase());
     }
 
     // Sorting
@@ -104,7 +110,7 @@ exports.getTodoById = async (req, res) => {
 // @route   POST /api/todos
 exports.createTodo = async (req, res) => {
   try {
-    const { title, description, priority, category, dueDate, subtasks } = req.body;
+    const { title, description, priority, category, dueDate, assignee, subtasks } = req.body;
 
     if (!title || !title.trim()) {
       return res.status(400).json({ success: false, message: 'Title is required' });
@@ -122,6 +128,7 @@ exports.createTodo = async (req, res) => {
       priority: priority || 'Medium',
       category: category || 'Work',
       dueDate: dueDate || '',
+      assignee: assignee ? assignee.trim() : '',
       subtasks: formattedSubtasks,
       completed: false
     });

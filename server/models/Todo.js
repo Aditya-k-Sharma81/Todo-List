@@ -21,6 +21,7 @@ const todoSchema = new mongoose.Schema(
     priority: { type: String, enum: ['High', 'Medium', 'Low'], default: 'Medium' },
     category: { type: String, default: 'Work' },
     dueDate: { type: String, default: '' },
+    assignee: { type: String, default: '' },
     subtasks: [subtaskSchema]
   },
   { timestamps: true }
@@ -96,6 +97,7 @@ class TodoDAO {
       priority: todoData.priority || 'Medium',
       category: todoData.category || 'Work',
       dueDate: todoData.dueDate || '',
+      assignee: todoData.assignee || '',
       subtasks: Array.isArray(todoData.subtasks) ? todoData.subtasks : [],
       createdAt: now,
       updatedAt: now

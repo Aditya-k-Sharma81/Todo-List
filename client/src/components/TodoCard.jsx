@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { CheckCircle2, Circle, Calendar, CheckSquare, Edit3, Trash2, ExternalLink } from 'lucide-react';
+import { CheckCircle2, Circle, Calendar, CheckSquare, Edit3, Trash2, ExternalLink, User } from 'lucide-react';
 
 export const TodoCard = ({ todo, onToggle, onEdit, onDelete, viewMode = 'grid' }) => {
-  const { id, title, description, completed, priority, category, dueDate, subtasks = [] } = todo;
+  const { id, title, description, completed, priority, category, dueDate, assignee, subtasks = [] } = todo;
 
   const completedSubtasks = subtasks.filter(st => st.completed === true || st.completed === 'true').length;
   const totalSubtasks = subtasks.length;
@@ -35,6 +35,16 @@ export const TodoCard = ({ todo, onToggle, onEdit, onDelete, viewMode = 'grid' }
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
               <span className={`badge ${priorityClass}`}>{priority}</span>
               <span className="badge badge-category">{category}</span>
+              {assignee && (
+                <span className="badge" style={{ background: 'rgba(99, 102, 241, 0.2)', color: '#a5b4fc', border: '1px solid rgba(99, 102, 241, 0.4)', display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
+                  <User size={12} /> {assignee}
+                </span>
+              )}
+              {isOverdue && (
+                <span className="badge badge-high" style={{ background: 'rgba(239, 68, 68, 0.25)', color: '#fca5a5', border: '1px solid rgba(239, 68, 68, 0.5)' }}>
+                  ⚠️ Overdue
+                </span>
+              )}
               <Link
                 to={`/todo?id=${id}`}
                 style={{
@@ -106,6 +116,16 @@ export const TodoCard = ({ todo, onToggle, onEdit, onDelete, viewMode = 'grid' }
           <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
             <span className={`badge ${priorityClass}`}>{priority}</span>
             <span className="badge badge-category">{category}</span>
+            {assignee && (
+              <span className="badge" style={{ background: 'rgba(99, 102, 241, 0.2)', color: '#a5b4fc', border: '1px solid rgba(99, 102, 241, 0.4)', display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
+                <User size={12} /> {assignee}
+              </span>
+            )}
+            {isOverdue && (
+              <span className="badge badge-high" style={{ background: 'rgba(239, 68, 68, 0.25)', color: '#fca5a5', border: '1px solid rgba(239, 68, 68, 0.5)' }}>
+                ⚠️ Overdue
+              </span>
+            )}
           </div>
 
           <button
